@@ -1,24 +1,35 @@
+// src/utils/firebase.js
+
 import admin from 'firebase-admin';
-import dontenv from 'dotenv';
+import dotenv from 'dotenv';
 
-dontenv.config();
+dotenv.config();
 
-const serviceAccountKey = process.env.SERVICE_ACCOUNT_KEY;
-let db;
+const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+// 1. DECLARACIÓN: Declara db como let fuera del try/catch
+let db = undefined; 
 
 try {
-  if (!serviceAccountKey) {
-    throw new Error ("La variable de entorno SERVICE_ACCOUNT_KEY no está definida")
-  }
+    if (!serviceAccountKey) {
+        throw new Error("La variable de entorno FIREBASE_SERVICE_ACCOUNT no está definida.");
+    }
+    
+    const serviceAccount = JSON.parse(serviceAccountKey);
 
-  const serviceAccount = JSON.parse(serviceAccountKey);
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  })
-
-  console.log("Conexion exitosa a Firebase Admin SDK.")
+    console.log("Conexión exitosa a Firebase Admin SDK.");
+    
+    // 2. ASIGNACIÓN: Asigna la instancia SOLAMENTE aquí
+    db = admin.firestore(); 
 
 } catch (error) {
-  console.error("ERROR. No se pudo inicializar Firebase Admin.", error.message)
+    // Si el error ocurrió aquí, db será undefined, pero ya lo sabemos.
+    console.error("ERROR: No se pudo inicializar Firebase Admin:", error.message);
 }
+
+// 3. EXPORTACIÓN: Exporta la instancia (que ahora debería ser globalmente definida)
+export { db };
