@@ -2,7 +2,11 @@ import { db } from '../utils/firebase.js'
 import { haySuperposicion } from '../utils/dataUtils.js'
 
 export async function buscarAutosDisponibles(params) {
-  const autosSnapshot = await db.collection('autos').get();
+  const { location, fechaRecogida, fechaDevolucion } = params;
+
+  const autosSnapshot = await db.collection('autos')
+                                  .where('ubicacion', '==', location)
+                                  .get();
 
   let autosInventario = [];
 
@@ -21,12 +25,10 @@ export async function buscarAutosDisponibles(params) {
     reservas.push(doc.data())
   })
 
-  const { fechaRecogida, fechaDevolucion } = params;
-
   const autosDisponibles = autosInventario.filter(auto => {
     const estaReservado = reservas.some(reserva => {
-      
-      if (reserva.autoId === auto.Id) {
+
+      if (reserva.autoId === auto.id) {
         return haySuperposicion(
           fechaRecogida,
           fechaDevolucion,
