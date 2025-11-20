@@ -17,6 +17,11 @@ app.get('/', (req, res) => {
   res.send('Serves is ready')
 })
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Servidor de Express corriendo en http://localhost:${PORT}`);
+    });
+}
+
+// EXPORTAR app para los tests
+export { app };
