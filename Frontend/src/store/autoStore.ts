@@ -44,7 +44,7 @@ export const useAutoStore = create<AutoState>((set, get) => ({
         fechaDevolucion: searchParams.fechaDevolucion,
       }).toString();
 
-      const response = await fetch(`http://localhost:3000/api/auto/autos?${query}`);
+      const response = await fetch(`/api/auto/autos?${query}`);
       if(!response.ok) throw new Error("Error al obtener datos del servidor");
 
       const data = await response.json();

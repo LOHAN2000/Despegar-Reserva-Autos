@@ -1,4 +1,3 @@
-import React from 'react'
 import { useAutoStore } from '../store/autoStore';
 
 export const Resultados = () => {
